@@ -106,7 +106,6 @@ def staff_update_attendance(request):
 
     return render(request, 'staff_template/staff_update_attendance.html', context)
 
-
 @csrf_exempt
 def get_student_attendance(request):
     attendance_date_id = request.POST.get('attendance_date_id')
@@ -231,73 +230,4 @@ def staff_view_profile(request):
     return render(request, "staff_template/staff_view_profile.html", context)
 
 
-@csrf_exempt
-def staff_fcmtoken(request):
-    token = request.POST.get('token')
-    try:
-        staff_user = get_object_or_404(CustomUser, id=request.user.id)
-        staff_user.fcm_token = token
-        staff_user.save()
-        return HttpResponse("True")
-    except Exception as e:
-        return HttpResponse("False")
 
-
-def staff_view_notification(request):
-    staff = get_object_or_404(Staff, admin=request.user)
-    notifications = NotificationStaff.objects.filter(staff=staff)
-    context = {
-        'notifications': notifications,
-        'page_title': "View Notifications"
-    }
-    return render(request, "staff_template/staff_view_notification.html", context)
-
-
-def staff_add_result(request):
-    staff = get_object_or_404(Staff, admin=request.user)
-    subjects = Subject.objects.filter(staff=staff)
-    sessions = Session.objects.all()
-    context = {
-        'page_title': 'Result Upload',
-        'subjects': subjects,
-        'sessions': sessions
-    }
-    if request.method == 'POST':
-        try:
-            student_id = request.POST.get('student_list')
-            subject_id = request.POST.get('subject')
-            test = request.POST.get('test')
-            exam = request.POST.get('exam')
-            student = get_object_or_404(Student, id=student_id)
-            subject = get_object_or_404(Subject, id=subject_id)
-            try:
-                data = StudentResult.objects.get(
-                    student=student, subject=subject)
-                data.exam = exam
-                data.test = test
-                data.save()
-                messages.success(request, "Scores Updated")
-            except:
-                result = StudentResult(student=student, subject=subject, test=test, exam=exam)
-                result.save()
-                messages.success(request, "Scores Saved")
-        except Exception as e:
-            messages.warning(request, "Error Occured While Processing Form")
-    return render(request, "staff_template/staff_add_result.html", context)
-
-
-@csrf_exempt
-def fetch_student_result(request):
-    try:
-        subject_id = request.POST.get('subject')
-        student_id = request.POST.get('student')
-        student = get_object_or_404(Student, id=student_id)
-        subject = get_object_or_404(Subject, id=subject_id)
-        result = StudentResult.objects.get(student=student, subject=subject)
-        result_data = {
-            'exam': result.exam,
-            'test': result.test
-        }
-        return HttpResponse(json.dumps(result_data))
-    except Exception as e:
-        return HttpResponse('False')
