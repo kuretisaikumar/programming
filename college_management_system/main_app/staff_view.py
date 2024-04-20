@@ -230,6 +230,7 @@ def staff_view_profile(request):
     return render(request, "staff_template/staff_view_profile.html", context)
 
 
+
 @csrf_exempt
 def staff_fcmtoken(request):
     token = request.POST.get('token')
