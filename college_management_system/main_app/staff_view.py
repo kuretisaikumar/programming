@@ -106,7 +106,6 @@ def staff_update_attendance(request):
 
     return render(request, 'staff_template/staff_update_attendance.html', context)
 
-
 @csrf_exempt
 def get_student_attendance(request):
     attendance_date_id = request.POST.get('attendance_date_id')
@@ -229,6 +228,7 @@ def staff_view_profile(request):
             return render(request, "staff_template/staff_view_profile.html", context)
 
     return render(request, "staff_template/staff_view_profile.html", context)
+
 
 
 @csrf_exempt
