@@ -22,7 +22,7 @@ def login_page(request):
             return redirect(reverse("student_home"))
     return render(request, 'main_app/login.html')
 
-
+@ csrf_exempt
 def doLogin(request, **kwargs):
     if request.method != 'POST':
         return HttpResponse("<h4>Denied</h4>")
